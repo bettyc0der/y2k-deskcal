@@ -1,0 +1,72 @@
+{
+  "name": "y2k-deskcal",
+  "version": "0.1.0",
+  "description": "Y2K desktop calendar with tray, bell reminders, crossed-out past days, today highlight, and todo side pad.",
+  "main": "src/main/main.js",
+  "author": "Charlotte Salcedo",
+  "license": "MIT",
+  "private": false,
+  "scripts": {
+    "dev": "concurrently -k \"vite --host 127.0.0.1\" \"wait-on http://127.0.0.1:5173 && electron .\"",
+    "start": "electron .",
+    "build:renderer": "vite build",
+    "build": "vite build && electron-builder",
+    "build:win": "vite build && electron-builder --win nsis portable",
+    "build:linux": "vite build && electron-builder --linux AppImage deb"
+  },
+  "dependencies": {
+    "@vitejs/plugin-react": "^4.3.4",
+    "concurrently": "^9.1.2",
+    "date-fns": "^4.1.0",
+    "electron-store": "^8.2.0",
+    "uuid": "^11.0.5",
+    "vite": "^6.0.7",
+    "wait-on": "^8.0.1"
+  },
+  "devDependencies": {
+    "electron": "^33.2.1",
+    "electron-builder": "^26.8.1",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1"
+  },
+  "build": {
+    "appId": "com.charlottesalcedo.y2kdeskcal",
+    "productName": "Y2K DeskCal",
+    "directories": {
+      "output": "release"
+    },
+    "files": [
+      "dist/**/*",
+      "src/main/**/*",
+      "src/preload/**/*",
+      "assets/**/*",
+      "package.json"
+    ],
+    "extraResources": [
+      {
+        "from": "assets",
+        "to": "assets"
+      }
+    ],
+    "win": {
+      "target": [
+        "nsis",
+        "portable"
+      ],
+      "icon": "assets/tray-icon.png"
+    },
+    "linux": {
+      "target": [
+        "AppImage",
+        "deb"
+      ],
+      "category": "Utility",
+      "icon": "assets/tray-icon.png"
+    },
+    "nsis": {
+      "oneClick": false,
+      "perMachine": false,
+      "allowToChangeInstallationDirectory": true
+    }
+  }
+}

@@ -1,0 +1,4 @@
+const { markEventReminded } = require('./store');
+function shouldFireReminder(event, now){ if(!event.startTime) return false; const start=new Date(event.startTime).getTime(); if(Number.isNaN(start)) return false; const reminderMinutes=Number(event.reminderMinutes||60); const reminderTime=start-reminderMinutes*60*1000; if(event.snoozedUntil){ const snoozedUntil=new Date(event.snoozedUntil).getTime(); if(!Number.isNaN(snoozedUntil)) return now>=snoozedUntil && now<=snoozedUntil+90*1000; } if(event.remindedAt) return false; return now>=reminderTime && now<=start; }
+function scheduleReminderLoop({getSnapshot,onReminder,onChange}){ const tick=()=>{ const now=Date.now(); const events=(getSnapshot().events)||[]; for(const event of events){ if(shouldFireReminder(event,now)){ onReminder(event); markEventReminded(event.id); if(onChange) onChange(); } } }; tick(); return setInterval(tick,30000); }
+module.exports={ scheduleReminderLoop };
