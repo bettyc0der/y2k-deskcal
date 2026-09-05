@@ -4,6 +4,7 @@ import TodoPad from './components/TodoPad.jsx';
 import EventPanel from './components/EventPanel.jsx';
 import ReminderModal from './components/ReminderModal.jsx';
 import { getMonthLabel } from './utils/calendar.js';
+import bellUrl from '../../assets/bell.wav?url';
 export default function App(){
  const [currentDate,setCurrentDate]=useState(new Date()); const [events,setEvents]=useState([]); const [todos,setTodos]=useState([]); const [settings,setSettings]=useState({}); const [selectedDate,setSelectedDate]=useState(new Date()); const [activeReminder,setActiveReminder]=useState(null);
  async function loadData(){ const snapshot=await window.deskcal.getStore(); setEvents(snapshot.events||[]); setTodos(snapshot.todos||[]); setSettings(snapshot.settings||{}); }
