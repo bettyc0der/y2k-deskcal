@@ -2,6 +2,10 @@
 
 A Windows 10, Windows 11, and Linux desktop calendar app with a system tray icon, big visual calendar, crossed-out past dates, today highlight, side todo pad, bell notifications, snooze/dismiss reminders, and a purple/hot-pink Y2K interface.
 
+## App Preview
+
+![Y2K DeskCal application screenshot](assets/2026-09-05%2019_55_12-Y2K%20DeskCal.png)
+
 ## What works in this starter version
 
 - Desktop app with Electron + React
