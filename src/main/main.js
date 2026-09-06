@@ -8,6 +8,7 @@ let mainWindow = null;
 let tray = null;
 let reminderLoop = null;
 const isDev = !app.isPackaged;
+app.commandLine.appendSwitch('autoplay-policy', 'no-user-gesture-required');
 
 function getAssetPath(fileName) {
   if (app.isPackaged) return path.join(process.resourcesPath, 'assets', fileName);
@@ -51,7 +52,7 @@ function sendToRenderer(channel, payload) {
   if (mainWindow && !mainWindow.isDestroyed()) mainWindow.webContents.send(channel, payload);
 }
 
-function showReminderNotification(event) {
+function showReminderNotification(event, playSound = true) {
   const notification = new Notification({
     title: 'Bell reminder',
     body: `${event.title} starts soon${event.startTime ? ` at ${new Date(event.startTime).toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' })}` : ''}.`,
@@ -60,7 +61,7 @@ function showReminderNotification(event) {
   });
   notification.on('click', () => { toggleWindow(true); sendToRenderer('reminder:focus', event); });
   notification.show();
-  sendToRenderer('reminder:ring', { event, bellUrl: pathToFileURL(getAssetPath('bell.wav')).href });
+  if (playSound) sendToRenderer('reminder:ring', { event });
 }
 
 app.whenReady().then(() => {
@@ -75,5 +76,5 @@ app.on('before-quit', () => { app.isQuitting = true; if (reminderLoop) clearInte
 ipcMain.handle('window:toggle', () => toggleWindow());
 ipcMain.handle('window:show', () => toggleWindow(true));
 ipcMain.handle('window:hide', () => toggleWindow(false));
-ipcMain.handle('notify:test', () => { showReminderNotification({ id: 'test', title: 'Test Bell Notification', startTime: new Date(Date.now() + 60*60*1000).toISOString() }); return { ok: true }; });
+ipcMain.handle('notify:test', () => { showReminderNotification({ id: 'test', title: 'Test Bell Notification', startTime: new Date(Date.now() + 60*60*1000).toISOString() }, false); return { ok: true }; });
 ipcMain.handle('reminder:snooze', (event, payload) => { const result = snoozeReminder(payload.eventId, payload.minutes); sendToRenderer('data:changed', getStoreSnapshot()); return result; });
